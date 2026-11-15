@@ -46,4 +46,6 @@ void retrair(void) {
     // 0 graus = Retraído
     ledc_set_duty(LEDC_MODE, LEDC_CHANNEL, angle_to_duty(0));
     ledc_update_duty(LEDC_MODE, LEDC_CHANNEL);
+
+    
 }
