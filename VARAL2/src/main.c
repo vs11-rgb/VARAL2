@@ -3,6 +3,7 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "esp_log.h"
+#include "freertos/semphr.h"
 #include "fsm.h"
 #include "sensors.h"
 #include "motor.h"
