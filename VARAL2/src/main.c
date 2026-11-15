@@ -8,14 +8,14 @@
 #include "atuadores.h"
 
 /*definição das portas*/
-#define PIN_SERVO       GPIO_NUM_46
-#define PIN_LIMIT_1     GPIO_NUM_41
-#define PIN_LIMIT_2     GPIO_NUM_42
-#define PIN_CHUVA       GPIO_NUM_4 
-#define PIN_DHT         GPIO_NUM_45
-#define PIN_LED_R       GPIO_NUM_20
-#define PIN_LED_G       GPIO_NUM_19
-#define PIN_LED_B       GPIO_NUM_18
+#define PIN_LIMIT_1     GPIO_NUM_42  // Conectado ao btn3
+#define PIN_LIMIT_2     GPIO_NUM_41  // Conectado ao btn2
+#define PIN_CHUVA       GPIO_NUM_0   // Conectado ao sw1 (Alavanca)
+#define PIN_DHT         45
+#define PIN_SERVO       GPIO_NUM_18
+#define PIN_LED_R       GPIO_NUM_19
+#define PIN_LED_G       GPIO_NUM_22
+#define PIN_LED_B       GPIO_NUM_23
 
 static const char *TAG = "MAIN";
 

@@ -1,60 +1,24 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-<<<<<<< HEAD
-#include "driver/gpio.h"
-#include "esp_log.h"
-#include "freertos/semphr.h"
-#include "fsm.h"
-#include "sensors.h"
-
-// Declaração de variáveis globais definidas no main.c
-extern const char *TAG;
-extern SemaphoreHandle_t xMutex;
-extern Evento_t evento_atual;
-
-#define PIN_LIMIT_1 GPIO_NUM_41
-
-void vSensorTask(void *pvParameters) {
-    int last_btn_state = -1;
-
-    ESP_LOGI(TAG, "[SENSOR] Task de Sensores iniciada.");
-=======
 #include "freertos/semphr.h"
 #include "driver/gpio.h"
 #include "sensors.h"
 #include "fsm.h"
 
-#define PIN_SERVO       GPIO_NUM_46
-#define PIN_CHUVA       GPIO_NUM_4 
-#define PIN_LIMIT_1     GPIO_NUM_41
-#define PIN_LIMIT_2     GPIO_NUM_42
-#define PIN_DHT         GPIO_NUM_45
-#define PIN_LED_R       GPIO_NUM_20
-#define PIN_LED_G       GPIO_NUM_19
-#define PIN_LED_B       GPIO_NUM_18
->>>>>>> eb31c1e (yep)
+#define PIN_LIMIT_1     GPIO_NUM_42  // Conectado ao btn3
+#define PIN_LIMIT_2     GPIO_NUM_41  // Conectado ao btn2
+#define PIN_CHUVA       GPIO_NUM_0   // Conectado ao sw1 (Alavanca)
+#define PIN_DHT         45
+#define PIN_SERVO       GPIO_NUM_18
+#define PIN_LED_R       GPIO_NUM_19
+#define PIN_LED_G       GPIO_NUM_22
+#define PIN_LED_B       GPIO_NUM_23
 
 // Variáveis externas compartilhadas (vindas da main.c)
 extern Evento_t evento_atual;
 extern SemaphoreHandle_t mutexEvento;
 
-<<<<<<< HEAD
-        // Detecta mudança de estado (transição)
-        if (current_btn_state != last_btn_state) {
-            last_btn_state = current_btn_state;
-
-            if (current_btn_state == 0) {
-                ESP_LOGI(TAG, "[SENSOR] Limit Switch Pressionado");
-
-                if (xSemaphoreTake(xMutex, pdMS_TO_TICKS(50)) == pdTRUE) {
-                    evento_atual = LIMIT_SWITCH;
-                    xSemaphoreGive(xMutex);
-                }
-            } else {
-                ESP_LOGI(TAG, "[SENSOR] Limit Switch Solto.");
-            }
-=======
 // Variáveis locais para armazenar o último estado de cada pino (útil para o debounce)
 static int last_limit1_state = -1;
 static int last_limit2_state = -1;
@@ -84,7 +48,6 @@ void sensores_atualizar_maquina(void) {
             xSemaphoreGive(mutexEvento);
             printf("[SENSORES] LIMIT SWITCH 1\n");
 
->>>>>>> eb31c1e (yep)
         }
     }
     
@@ -103,11 +66,6 @@ void sensores_atualizar_maquina(void) {
     if(curr_chuva != last_chuva_state){
         last_chuva_state = curr_chuva;
 
-<<<<<<< HEAD
-        vTaskDelay(pdMS_TO_TICKS(50));
-    }
-}
-=======
         if(curr_chuva == 0){
             xSemaphoreTake(mutexEvento, portMAX_DELAY);
             evento_atual = MOLHADO;
@@ -123,4 +81,3 @@ void sensores_atualizar_maquina(void) {
         }
     }
     }
->>>>>>> eb31c1e (yep)
