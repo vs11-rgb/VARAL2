@@ -6,7 +6,7 @@
 
 typedef enum {RETRAIDO, ESPERA, ESTENDIDO, ESTENDENDO, RETRAINDO
 } Estado_t;
-typedef enum {SECO, MOLHADO, UMIDO, TEMPO, BOTAO, LIMIT_SWITCH} Evento_t;
+typedef enum {SECO, MOLHADO, UMIDO, TEMPO, BOTAO, LIMIT_SWITCH,EVENTO_NENHUM} Evento_t;
 typedef enum {A01, A02, A03, A04, A05, A06, NENHUMA_ACAO} Acao_t;
 
 typedef struct {

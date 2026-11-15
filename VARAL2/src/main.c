@@ -20,7 +20,7 @@
 static const char *TAG = "MAIN";
 
 static Evento_t evento_atual = TEMPO;
-static SemaphoreHandle_t xMutex = NULL;
+static SemaphoreHandle_t mutexEvento = NULL;
 
 void vSensorTask(void*pvParameters){
    const TickType_t xFrequency = pdMS_TO_TICKS(50); // Taxa de polling / debounce
@@ -33,30 +33,74 @@ void vSensorTask(void*pvParameters){
 }
 
 void vAtuadorTask(void*pvParameters){
-     TickType_t xLastWakeTime;
-   const TickType_t xFrequency = pdMS_TO_TICKS(100);
-   xLastWakeTime = xTaskGetTickCountFromISR();
-   motor_init();
-   while (1) {
-        // Exemplo de acionamento baseado no evento atual
-        // (Substitua pela sua lógica de leitura de evento segura com Mutex)
-        
-        
-        // Se chover:
-        // retrair();
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = pdMS_TO_TICKS(100);
+    xLastWakeTime = xTaskGetTickCount();
+    motor_init();
+    fsm_init();
+    static bool estendido_state = false;
 
-        // Se o tempo estiver firme:
-        // estender();
+    Estado_t estado_fsm = RETRAIDO; 
+    Acao_t acao_atual;
 
+    while (1) {
+        Evento_t evento_local = EVENTO_NENHUM;
+
+        
+        if (mutexEvento != NULL) {
+            if (xSemaphoreTake(mutexEvento, pdMS_TO_TICKS(10)) == pdTRUE) {
+                evento_local = evento_atual;
+                evento_atual = EVENTO_NENHUM;
+                xSemaphoreGive(mutexEvento);
+                }
+            }
+        if (evento_local != EVENTO_NENHUM) {
+            estado_fsm = fsm_process_event(estado_fsm, evento_local, &acao_atual);
+            ESP_LOGI(TAG, "Evento: %d | Novo Estado: %d | Ação: %d", evento_local, estado_fsm, acao_atual);
+
+            // Executa a ação determinada pela matriz
+            switch (acao_atual) {
+                case A01:
+                    ESP_LOGI(TAG, "[ATUADOR] Ação A01: Iniciando espera...");
+                    break;
+
+                case A02:
+                    estender();
+                    ESP_LOGI(TAG, "[ATUADOR] Ação A02: Estendendo o varal...");
+                    break;
+
+                case A03:
+                    ESP_LOGI(TAG, "[ATUADOR] Ação A03: Fim de curso atingido (Estendido).");
+                    break;
+
+                case A04:
+                    retrair();
+                    ESP_LOGI(TAG, "[ATUADOR] Ação A04: Recolhendo o varal (Chuva detectada)...");
+                    break;
+
+                case A05:
+                    ESP_LOGI(TAG, "[ATUADOR] Ação A05: Fim de curso atingido (Retraído).");
+                    break;
+
+                case A06:
+                    retrair();
+                    ESP_LOGI(TAG, "[ATUADOR] Ação A06: Umidade alta na espera -> Recolhendo...");
+                    break;
+
+                case NENHUMA_ACAO:
+                default:
+                    break;
+            }
+        }
         vTaskDelayUntil(&xLastWakeTime, xFrequency);
    }
-
-    
-
 }
 
 
 
 void app_main(void) {
-  
+    mutexEvento = xSemaphoreCreateMutex();
+    xTaskCreate(vSensorTask, "sensor task", 2048, NULL, 2, NULL);
+    xTaskCreate(vAtuadorTask, "atuador task", 2048, NULL, 2, NULL);
+
 }
