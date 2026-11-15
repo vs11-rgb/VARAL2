@@ -4,6 +4,8 @@
 #include "driver/gpio.h"
 #include "esp_log.h"
 #include "fsm.h"
+#include "sensors.h"
+#include "atuadores.h"
 
 /*definição das portas*/
 #define PIN_SERVO       GPIO_NUM_46
