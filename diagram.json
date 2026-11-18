@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "author": "isaac lisboa",
-  "editor": "isaac",
+  "author": "Ayran Thiery, Gabriel Ungarello, Guilherme Dellavolpe, Vitor Stella",
+  "editor": "unknown",
   "parts": [
     {
       "type": "wokwi-breadboard-half",
